@@ -3,38 +3,38 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://localhost:1313/post/</loc>
+    <loc>http://unknownpurpose.github.io/post/</loc>
     <lastmod>2017-11-01T10:40:40+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/about/</loc>
+    <loc>http://unknownpurpose.github.io/about/</loc>
     <lastmod>2017-11-01T10:04:27+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/post/servos-in-the-cloud/</loc>
+    <loc>http://unknownpurpose.github.io/post/servos-in-the-cloud/</loc>
     <lastmod>2017-11-01T09:55:31+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/post/cloud-robotics-with-ros-and-docker/</loc>
+    <loc>http://unknownpurpose.github.io/post/cloud-robotics-with-ros-and-docker/</loc>
     <lastmod>2017-11-01T09:52:01+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>http://unknownpurpose.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>http://unknownpurpose.github.io/</loc>
     <lastmod>2017-11-01T09:55:31+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>http://unknownpurpose.github.io/tags/</loc>
     <priority>0</priority>
   </url>
   
