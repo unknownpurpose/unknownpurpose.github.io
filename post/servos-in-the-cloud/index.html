@@ -1,0 +1,151 @@
+    <!DOCTYPE html>
+<html lang="en-gb">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Institute of Unknown Purpose">
+		<meta name="description" content="Center for the Narrowly Improbable">
+		<meta name="generator" content="Hugo 0.30.2" />
+		<title>Servos in the Cloud &middot; Institute of Unknown Purpose</title>
+		<link rel="shortcut icon" href="http://localhost:1313/images/favicon.ico">
+		<link rel="stylesheet" href="http://localhost:1313/css/style.css">
+		<link rel="stylesheet" href="http://localhost:1313/css/highlight.css">
+		
+
+		
+		<link rel="stylesheet" href="http://localhost:1313/css/font-awesome.min.css">
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='http://localhost:1313/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='http://localhost:1313/post'>Archive</a>
+	<a href='http://localhost:1313/tags'>Tags</a>
+	<a href='http://localhost:1313/about'>About</a>
+
+	
+
+	
+</nav>
+
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>
+                        Servos in the Cloud
+                    </h1>
+                    <h2 class="headline">
+                    Nov 1, 2017 09:55
+                    · 293 words
+                    · 2 minutes read
+                      <span class="tags">
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                <section id="post-body">
+                    <p>If you followed along with our <a href="/post/cloud-robotics-with-ros-and-docker">introduction</a> to Docker, ROS, and overlay networking you&rsquo;ll have a couple of machines (at least) in a Swarm, and an overlay network called <code>botnet</code> which is all ready to go.</p>
+
+<p>For the next part, we&rsquo;re going to hook up a Beaglebone Black with four Dynamixels attached via a USB2AX controller, then control it remotely. Whilst this is pretty specific requirements-wise, these instructions will also generalise fairly well to other platforms – Raspberry Pi for instance – with only a bit of tinkering. So…</p>
+
+<p>First up, clone and prepare the tentacle-os repository on each of your Swarm-enabled machines:</p>
+
+<pre><code>git clone http://github.com/unknownpurpose/tentacle-os
+cd tentacle-os
+git submodule update --init
+chmod +x rep.sh
+</code></pre>
+
+<p>This repo contains two dockerfiles – one for the Beaglebone and another for desktop linux.</p>
+
+<p>To build and launch <code>roscore</code>, the ROS central comms server, run the following on a Swarm-enabled desktop linux machine (or via docker-machine on a Virtualbox instance if you&rsquo;re running on Mac or Windows):</p>
+
+<pre><code>docker build -f deploy/desktop/Dockerfile -t fhtagn:base .
+docker run -it --rm -d \
+    --net botnet \
+    --name master \
+    fhtagn:base \
+    roscore
+</code></pre>
+
+<p>To then build and launch TentacleOS packages on the Swarm-enabled Beaglebone, run the following:</p>
+
+<pre><code>docker build -f deploy/beaglebone/Dockerfile -t fhtagn:base .
+docker run -d \
+    --net botnet \
+    --device=/dev/ttyACM0 \
+    --name servo \
+    --env ROS_MASTER_URI=http://master:11311 \
+    fhtagn:base \
+    roslaunch tentacle_control tentacle_controller.launch
+</code></pre>
+
+<p>The main things to note here is that we&rsquo;re passing through a reference to the USB2AX device, accessible at /dev/ttyACM0 by default, and setting ROS_MASTER_URI to point at our recently launched roscore.</p>
+
+<p>From anywhere on our Swarm network we can now control the servo remotely, e.g.</p>
+
+<pre><code>docker run -it --rm -d \
+    --net botnet \
+    --env ROS_MASTER_URI=http://master:11311 \
+    fhtagn:base \
+    rostopic pub -1 /tilt_controller/command std_msgs/Float64 -- 1.5
+</code></pre>
+
+                </section>
+            </article>
+
+            
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="http://github.com/unknownpurpose">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Institute of Unknown Purpose
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="http://localhost:1313/js/jquery-2.2.4.min.js"></script>
+<script src="http://localhost:1313/js/main.js"></script>
+<script src="http://localhost:1313/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>
